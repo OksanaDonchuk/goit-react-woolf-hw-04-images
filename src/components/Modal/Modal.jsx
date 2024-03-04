@@ -1,38 +1,38 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import css from './Modal.module.css';
 
-class Modal extends Component {
-  componentDidMount() {
-    document.documentElement.style.overflowY = 'hidden';
-    window.addEventListener('keydown', this.handlePressKey);
-  }
-  componentWillUnmount() {
-    document.documentElement.style.overflowY = '';
-    window.removeEventListener('keydown', this.handlePressKey);
-  }
+const Modal = ({ largeImageURL, onClose }) => {
+  useEffect(() => {
+    const handlePressKey = evn => {
+      if (evn.key !== 'Escape') {
+        return;
+      }
+      onClose();
+    };
 
-  handleClickOverlay = evn => {
+    document.documentElement.style.overflowY = 'hidden';
+    window.addEventListener('keydown', handlePressKey);
+
+    return () => {
+      document.documentElement.style.overflowY = '';
+      window.removeEventListener('keydown', handlePressKey);
+    };
+  }, [onClose]);
+
+  const handleClickOverlay = evn => {
     if (evn.target !== evn.currentTarget) {
       return;
     }
-    this.props.onClose();
+    onClose();
   };
 
-  handlePressKey = evn => {
-    if (evn.key !== 'Escape') {
-      return;
-    }
-    this.props.onClose();
-  };
-
-  render() {
-    return (
-      <div className={css.overlay} onClick={this.handleClickOverlay}>
-        <div className={css.modal}>
-          <img width={700} height={500} src={this.props.largeImageURL} alt="" />
-        </div>
+  return (
+    <div className={css.overlay} onClick={handleClickOverlay}>
+      <div className={css.modal}>
+        <img width={700} height={500} src={largeImageURL} alt="" />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
 export default Modal;
